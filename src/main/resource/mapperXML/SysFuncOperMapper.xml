@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wwtx.mapper.SysFuncOperMapper" >
+  <resultMap id="SysFuncOperMap" type="com.wwtx.model.SysFuncOper" >
+    <id column="OPER_UID" property="operUid" jdbcType="INTEGER" />
+    <result column="OPER_CODE" property="operCode" jdbcType="VARCHAR" />
+    <result column="OPER_FUNC" property="operFunc" jdbcType="INTEGER" />
+  </resultMap>
+  
+   <resultMap type="com.wwtx.model.dto.SysFuncOperDto" id="SysFuncOperDtoMap" extends="SysFuncOperMap">
+  	<result column="OPER_Name" property="operName" jdbcType="VARCHAR" />
+  	<result column="FUNC_Name" property="funcName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    OPER_UID, OPER_CODE, OPER_FUNC
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="SysFuncOperMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_funcoper
+    where OPER_UID = #{operUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_funcoper
+    where OPER_UID = #{operUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.SysFuncOper" >
+    insert into sys_funcoper (OPER_UID, OPER_CODE, OPER_FUNC
+      )
+    values (#{operUid,jdbcType=VARCHAR}, #{operCode,jdbcType=VARCHAR}, #{operFunc,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysFuncOper" >
+    insert into sys_funcoper
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operUid != null" >
+        OPER_UID,
+      </if>
+      <if test="operCode != null" >
+        OPER_CODE,
+      </if>
+      <if test="operFunc != null" >
+        OPER_FUNC,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operUid != null" >
+        #{operUid,jdbcType=VARCHAR},
+      </if>
+      <if test="operCode != null" >
+        #{operCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operFunc != null" >
+        #{operFunc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysFuncOper" >
+    update sys_funcoper
+    <set >
+      <if test="operCode != null" >
+        OPER_CODE = #{operCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operFunc != null" >
+        OPER_FUNC = #{operFunc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where OPER_UID = #{operUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysFuncOper" >
+    update sys_funcoper
+    set OPER_CODE = #{operCode,jdbcType=VARCHAR},
+      OPER_FUNC = #{operFunc,jdbcType=VARCHAR}
+    where OPER_UID = #{operUid,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 查询功能操作 -->
+  <select id="funcOperList" parameterType="java.lang.Integer" resultMap="SysFuncOperDtoMap">
+	select o.*,fc.OPER_FUNC from SYS_OPER o
+	 left join SYS_FUNCOPER fc on o.OPER_CODE = fc.OPER_CODE and fc.OPER_FUNC=#{funcUid} order by o.OPER_NAME
+ </select>
+   <!--  角色功能-批量插入 -->
+  <insert id="batchInsertFuncOper" parameterType="java.util.List">
+	INSERT INTO SYS_FUNCOPER (OPER_UID, OPER_CODE, OPER_FUNC)
+	<foreach collection="list" item="item" index="index" separator="union all" >
+		select  sys_guid() ,#{item.operCode} ,#{item.operFunc} from dual
+	</foreach>
+  </insert>
+  <!--  角色功能-删除 -->
+  <delete id="deleteByFuncId" parameterType="java.lang.Integer">
+	 delete SYS_FUNCOPER t where t.OPER_FUNC =#{funcUid}
+  </delete>
+</mapper>

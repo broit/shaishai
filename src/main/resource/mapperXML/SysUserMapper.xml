@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysUserMapper">
+  <resultMap id="SysUserMap" type="com.wwtx.model.SysUser">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+ </resultMap>
+ <resultMap id="SysUserDtoMap" type="com.wwtx.model.dto.SysUserDto" extends="SysUserMap">
+ </resultMap>
+ 
+ 
+  <sql id="Base_Column_List">
+    id, code, name, password, mobile,status
+  </sql>
+<!--   根据用户名查询密码 -->
+  <select id="userPassword" parameterType="java.lang.String" resultMap="SysUserMap">
+  		select * from sys_user t 
+  		   where t.code=#{code,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SysUserDtoMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_user
+   		 where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.SysUser"  useGeneratedKeys="true" keyProperty="id">
+    insert into sys_user (
+                id, code, name,password, mobile,status)
+    values (#{id,jdbcType=INTEGER}, 
+           #{code,jdbcType=VARCHAR}, 
+           #{name,jdbcType=VARCHAR}, 
+           #{password,jdbcType=VARCHAR},
+           #{mobile,jdbcType=VARCHAR},
+           #{status,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysUser">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="status !=null">
+      status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="status !=null">
+      #{status}
+      </if>
+    </trim>
+  </insert>
+<!--   添加用户 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysUser">
+    update sys_user
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="status !=null">
+      status=#{status}
+      </if>>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+   <update id="modify" parameterType="com.wwtx.model.SysUser">
+   update sys_user
+   set password = #{password,jdbcType=VARCHAR}
+   where id = #{id,jdbcType=INTEGER}
+   </update>
+<!--   更新用户 -->
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysUser">
+    update sys_user
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      status=#{status,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <sql id="listWhereCase">
+  	<where>
+  		<if test="param!=null and param.code!=null and param.code!='' ">     
+            u.CODE like '%'||#{param.code}||'%'
+        </if>
+    	<if test="param!=null and param.name!=null and param.name!='' ">     
+            AND u.NAME like '%'||#{param.name}||'%'
+        </if>
+    </where>
+  </sql>
+<!-- 用户操作权限 -->
+<select id="selectFuncOper" parameterType="java.util.List" resultMap="com.wwtx.mapper.SysRolefuncMapper.SysRolefuncDtoMap">
+select distinct A.func_uid,
+	A.func_name,
+	A.func_parent,
+	A.func_img,
+	A.FUNC_TYPE,
+	A.func_code,
+	A.func_url,
+	A.func_level,
+	A.func_iserial,
+	A.rolefunc_funcid
+ from (
+	SELECT t.id as func_uid,
+           t.func_name,
+           IFNULL(t.func_parent, 'root') AS func_parent,
+           t.func_img,
+           'func' as FUNC_TYPE,
+           t.func_code,
+           t.func_url,
+           t.func_level,
+           t.func_iserial,
+           r.rolefunc_funcid
+      FROM sys_func t
+      join sys_rolefunc r
+        on t.id = r.rolefunc_funcid
+       and r.rolefunc_roleid in
+       <foreach collection="list" item="roleId" index="index"
+            open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+    union all
+    select fc.OPER_UID,
+           o.oper_name,
+           f.func_code as func_parent,
+           '' as func_img,
+           'oper' as FUNC_TYPE,
+           o.OPER_CODE,
+           '' as func_url,
+           99 as func_level,
+           99 as func_iserial,
+           ro.roleoper_operid
+      from SYS_FUNC f
+      join SYS_FUNCOPER fc
+        on f.id = fc.oper_func
+      join SYS_OPER o
+        on fc.oper_code = o.oper_code
+      join SYS_ROLEOPER ro
+        on fc.oper_uid = ro.roleoper_operid
+       and ro.roleoper_roleid in
+       <foreach collection="list" item="roleId" index="index"
+            open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+   )A ORDER BY A.func_level,A.func_iserial
+</select>
+
+<!--   用户列表查询 -->
+  <select id="selectList" parameterType="com.wwtx.bean.PageBean" resultMap="SysUserMap">
+  	<include refid="com.wwtx.mapper.Common.pagination_Head" />
+    select u.* from sys_user u 
+ 
+    <include refid="listWhereCase" />
+    <include refid="com.wwtx.mapper.Common.pagination_Tail" />
+  </select>
+  <!--   用户列表计数 -->
+  <select id="countList" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+    select count(*) from sys_user u 
+   
+    <include refid="listWhereCase" />
+  </select>
+<!--   列表数量 -->
+<select id="count" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+      SELECT count(*) FROM sys_user t WHERE 1 = 1
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR}
+      </if>      
+</select>
+<!-- 用户登录名不能重复添加验证 -->
+<select id="validateUserCode" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+       select count(*) from sys_user t where  t.CODE = #{code}
+       <if test="id != null">
+        and ID &lt;&gt; #{id,jdbcType=VARCHAR}
+      </if>
+</select>
+
+  
+  <!-- 加载表单 -->
+  <select id="loadForm" parameterType="java.lang.Integer" resultMap="SysUserMap">
+    select u.* from sys_user u where u.ID = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 启用或者禁用用户 -->
+  <update id="beOrdisAble" parameterType="com.wwtx.model.SysUser">
+  	update sys_user u set u.status=#{status,jdbcType=CHAR} where u.id=#{id,jdbcType=INTEGER}
+  </update>
+  
+
+</mapper>

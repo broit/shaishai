@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysUserroleMapper">
+  <resultMap id="SysUserroleMap" type="com.wwtx.model.SysUserrole">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="USERROLE_USERID" jdbcType="INTEGER" property="userroleUserid" />
+    <result column="USERROLE_ROLEID" jdbcType="INTEGER" property="userroleRoleid" />
+   </resultMap>
+    
+   <resultMap id="SysUserroleDtoMap" type="com.wwtx.model.dto.SysUserroleDto" extends="SysUserroleMap">
+    <result column="ROLE_UID" jdbcType="INTEGER" property="roleUid" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+  </resultMap>
+   <sql id="pagination_Head" >
+      select * from ( select row_.*, rownum rownum_ from ( 
+  </sql>  
+  <sql id="pagination_Tail" >
+      <![CDATA[ ) row_  where rownum <= #{start}+#{limit} ) where rownum_ >  #{start}]]>
+  </sql>
+  <sql id="Base_Column_List">
+    id, userrole_userid, userrole_roleid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SysUserroleMap">
+    <include refid="pagination_Head" />
+    select 
+    <include refid="Base_Column_List" />
+    from sys_userrole
+    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List" /> 
+  </select>
+  
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysUserrole">
+    update sys_userrole
+    set userrole_userid = #{userroleUserid,jdbcType=INTEGER},
+      userrole_roleid = #{userroleRoleid,jdbcType=INTEGER},
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 用户功能权限一级菜单 -->
+  <select id="getUserTopFunc" parameterType="com.wwtx.bean.PageBean" resultMap="SysUserroleDtoMap">
+SELECT *
+  FROM sys_func f
+ WHERE f.func_level = 1
+   AND EXISTS (SELECT 1
+          FROM v_userrole ur
+          JOIN sys_role r
+            ON ur.userrole_roleid = r.id
+          JOIN sys_rolefunc rf
+            ON rf.rolefunc_roleid = r.id
+         WHERE ur.id = #{id}
+           AND f.id = rf.rolefunc_funcid)
+ ORDER BY f.func_level, f.func_parent, f.func_iserial
+  </select>
+ 
+  <!-- 查询用户角色ID列表 -->
+  <select id="queryUserRole" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	select ur.userrole_roleid from sys_userrole ur where ur.userrole_userid=#{id}
+ </select>
+  <!-- 查询用户角色 -->
+  <select id="userRoleList" parameterType="java.lang.Integer" resultMap="SysUserroleDtoMap">
+	select r.*,ur.USERROLE_USERID as roleUid from sys_role r
+	 join sys_userrole ur on r.id = ur.userrole_roleid and ur.userrole_userid=#{id} order by r.role_name
+ </select>
+  <!-- 查询用户角色 -->
+  <select id="roleList" parameterType="java.lang.Integer" resultMap="SysUserroleDtoMap">
+	select r.* from sys_role r
+ </select>
+<!-- 添加用户角色 -->
+  <insert id="insertUserRole" parameterType="com.wwtx.model.dto.SysUserDto" >
+    insert into sys_userrole (id,USERROLE_USERID,USERROLE_ROLEID
+      )
+    values (#{id,jdbcType=INTEGER},#{uid,jdbcType=INTEGER},#{roleid,jdbcType=INTEGER}
+      )
+  </insert>
+<!-- 修改用户角色 -->
+  <update id="updateUserRole" parameterType="com.wwtx.model.dto.SysUserDto" >
+    update sys_userrole
+    set USERROLE_ROLEID = #{roleid,jdbcType=VARCHAR}
+    where USERROLE_USERID = #{uid,jdbcType=INTEGER}
+  </update>
+  <select id="role" parameterType="java.lang.Integer" resultType="com.wwtx.model.SysUserrole">
+	select ur.userrole_roleid as userroleRoleid from sys_userrole ur where ur.userrole_userid=#{id}
+ </select>
+</mapper>

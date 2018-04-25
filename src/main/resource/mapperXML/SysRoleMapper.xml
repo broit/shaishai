@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysRoleMapper">
+  <resultMap id="SysRoleMap" type="com.wwtx.model.SysRole">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="ROLE_CREATEDATE" jdbcType="TIMESTAMP" property="roleCreatedate" />
+    <result column="ROLE_REMARK" jdbcType="VARCHAR" property="roleRemark" />
+   </resultMap>
+    
+   <resultMap id ="SysRoleDtoMap" type="com.wwtx.model.dto.SysRoleDto"  extends="SysRoleMap">
+    <result column="FUNC_UID" jdbcType="INTEGER" property="funcUid" />
+    <result column="FUNC_NAME" jdbcType="VARCHAR" property="funcName" />
+    <result column="FUNC_PARENT" jdbcType="INTEGER" property="funcParent" />
+    <result column="FUNC_LEVEL" jdbcType="VARCHAR" property="funcLevel" />
+    <result column="FUNC_URL" jdbcType="VARCHAR" property="funcUrl" />
+    <result column="FUNC_IMG" jdbcType="VARCHAR" property="funcImg" />
+    <result column="FUNC_TYPE" jdbcType="VARCHAR" property="funcType" />
+    <result column="FUNC_ISERIAL" jdbcType="VARCHAR" property="funcIserial" />
+    <result column="FUNC_REMARK" jdbcType="VARCHAR" property="funcRemark" />
+    <result column="ROLEFUNC_FUNCID" jdbcType="VARCHAR" property="rolefuncFuncid" />
+    <result column="ROLEFUNC_ROLEID" jdbcType="VARCHAR" property="rolefuncRoleid" />
+    <result column="OPER_NAME" jdbcType="VARCHAR" property="operName" />
+    <result column="ROLEOPER_OPERID" jdbcType="VARCHAR" property="roleoperOperid" />
+    <result column="OPER_CODE" jdbcType="VARCHAR" property="operCode" />
+    <result column="OPER_FUNC" jdbcType="VARCHAR" property="operFunc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role_name, role_createdate, role_remark
+  </sql>
+  <select id="roleUser" parameterType="java.lang.Integer" resultMap="SysRoleMap">
+    select r.id from sys_role r 
+		join sys_userrole ur   on ur.userrole_roleid=r.id
+		join sys_user u        on u.id=ur.userrole_userid
+		where u.id=#{id}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SysRoleMap">
+    select 
+    	<include refid="Base_Column_List" />
+    	from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_role
+   		 where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.SysRole">
+    insert into sys_role (id, role_name, role_createdate, 
+      role_remark)
+    values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, sysdate, 
+      #{roleRemark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysRole">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleCreatedate != null">
+        role_createdate,
+      </if>
+      <if test="roleRemark != null">
+        role_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCreatedate != null">
+        #{roleCreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roleRemark != null">
+        #{roleRemark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysRole">
+    update sys_role
+    <set>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <!-- <if test="roleCreatedate != null">
+        ROLE_CREATEDATE = #{roleCreatedate,jdbcType=TIMESTAMP},
+      </if> -->
+      <if test="roleRemark != null">
+        role_remark = #{roleRemark,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysRole">
+    update sys_role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_remark = #{roleRemark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="count" parameterType="java.lang.String" resultType="java.lang.Integer">
+  SELECT count(*)
+		  FROM sys_role t  WHERE 1 = 1 
+  		<if test="roleName != null">
+  			and t.role_Name like '%'||#{roleName}||'%'
+  		</if>
+  </select>
+  <select id="list" parameterType="java.lang.String" resultMap="SysRoleDtoMap">
+  SELECT t.*, t.role_createdate as role_createdate_format
+     	FROM sys_role t   WHERE 1 = 1
+   			<if test="roleName != null">
+ 				and t.role_Name like '%'||#{roleName}||'%'
+    		</if>
+ 				order by t.role_name
+  </select>
+<!--角色功能 -->
+<select id="getRoleFunc" parameterType="java.lang.Integer" resultMap="SysRoleDtoMap">
+SELECT   t.id as func_uid, t.func_name, NVL (t.func_parent, 'root') AS func_parent,
+ t.func_level, t.func_url, t.func_img, t.func_type, t.func_iserial,
+ t.func_remark,r.rolefunc_funcid
+ FROM sys_func t left join sys_rolefunc r on t.id=r.rolefunc_funcid
+ and r.rolefunc_roleid=#{rolefuncRoleid}
+ ORDER BY t.func_level, t.func_parent, t.func_iseria
+ </select>
+  <sql id="listWhereCase">
+ 	<where>
+ 		<if test="param!=null and param.roleName!=null and param.roleName!='' ">     
+           role_name like '%'||#{param.roleName}||'%'
+       </if>
+   </where>
+ </sql>
+<!--   角色列表查询 -->
+  <select id="selectList" parameterType="com.wwtx.bean.PageBean" resultMap="SysRoleMap">
+  	<include refid="com.wwtx.mapper.Common.pagination_Head" />
+   		 select 
+    <include refid="Base_Column_List" />
+   			 from sys_role
+    <include refid="listWhereCase" />
+      order by role_createdate desc
+    <include refid="com.wwtx.mapper.Common.pagination_Tail" />
+  </select>
+<!--   角色列表计数 -->
+  <select id="countList" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+    select count(*) from sys_role
+    <include refid="listWhereCase" />
+  </select>
+  <!-- 根据角色名称计数 -->
+  <select id="countByName" parameterType="com.wwtx.model.SysRole" resultType="java.lang.Integer">
+  	select count(*) from sys_role where role_name=#{roleName} 
+  	<if test="roleUid!=null and roleUid!='' ">  
+  	 	and id&lt;&gt;#{roleUid}
+  	</if>
+  	<if test="roleUid==null or roleUid=='' ">  
+  	 	and id is null
+  	</if>
+  </select>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysRolefuncMapper">
+  <resultMap id="SysRolefuncMap" type="com.wwtx.model.SysRolefunc">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="ROLEFUNC_ROLEID" jdbcType="INTEGER" property="rolefuncRoleid" />
+    <result column="ROLEFUNC_FUNCID" jdbcType="INTEGER" property="rolefuncFuncid" />
+   </resultMap>
+    
+   <resultMap id ="SysRolefuncDtoMap" type="com.wwtx.model.dto.SysRolefuncDto" extends="SysRolefuncMap">
+    <result column="FUNC_UID" jdbcType="INTEGER" property="funcUid" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="FUNC_NAME" jdbcType="VARCHAR" property="funcName" />
+    <result column="FUNC_PARENT" jdbcType="VARCHAR" property="funcParent" />
+    <result column="FUNC_LEVEL" jdbcType="VARCHAR" property="funcLevel" />
+    <result column="FUNC_URL" jdbcType="VARCHAR" property="funcUrl" />
+    <result column="FUNC_IMG" jdbcType="VARCHAR" property="funcImg" />
+    <result column="FUNC_TYPE" jdbcType="VARCHAR" property="funcType" />
+    <result column="FUNC_ISERIAL" jdbcType="VARCHAR" property="funcIserial" />
+    <result column="FUNC_REMARK" jdbcType="VARCHAR" property="funcRemark" />
+    <result column="OPER_NAME" jdbcType="VARCHAR" property="operName" />
+    <result column="ROLEOPER_OPERID" jdbcType="INTEGER" property="roleoperOperid" />
+    <result column="OPER_CODE" jdbcType="VARCHAR" property="operCode" />
+    <result column="OPER_FUNC" jdbcType="VARCHAR" property="operFunc" />
+    <result column="FUNC_CODE" jdbcType="VARCHAR" property="funcCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, rolefunc_roleid, rolefunc_funcid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SysRolefuncMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_rolefunc
+    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List" /> 
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_rolefunc
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysRolefunc">
+    insert into sys_rolefunc
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="rolefuncRoleid != null">
+        rolefunc_roleid,
+      </if>
+      <if test="rolefuncFuncid != null">
+        rolefunc_funcid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="rolefuncRoleid != null">
+        #{rolefuncRoleid,jdbcType=INTEGER},
+      </if>
+      <if test="rolefuncFuncid != null">
+        #{rolefuncFuncid,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysRolefunc">
+    update sys_rolefunc
+    <set>
+      <if test="rolefuncRoleid != null">
+        rolefunc_roleid = #{rolefuncRoleid,jdbcType=INTEGER},
+      </if>
+      <if test="rolefuncFuncid != null">
+        rolefunc_funcid = #{rolefuncFuncid,jdbcType=INTEGER}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysRolefunc">
+    update sys_rolefunc
+    set rolefunc_roleid = #{rolefuncRoleid,jdbcType=INTEGER},
+      rolefunc_funcid = #{rolefuncFuncid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+ 
+<!-- 角色功能列表 -->
+   <select id="roleFuncList" parameterType="java.lang.Integer" resultMap="SysRolefuncDtoMap">
+   		SELECT t.id as func_uid,
+		       t.func_name,
+		       NVL(t.func_parent, 'root') AS func_parent,
+		       t.func_img,
+		       'func' as FUNC_TYPE,
+		       t.func_level,
+		       t.func_iserial,
+		       r.rolefunc_funcid
+		  FROM sys_func t
+		  left join sys_rolefunc r
+		    on t.id = r.rolefunc_funcid
+		   and r.id = #{roleUid}
+		 ORDER BY func_level,func_iserial
+  </select>
+<!--  角色功能-删除 -->
+<delete id="deleteByRoleId" parameterType="java.lang.Integer">
+ delete sys_rolefunc t where t.rolefunc_roleid =#{rolefuncRoleid}
+</delete>
+
+</mapper>

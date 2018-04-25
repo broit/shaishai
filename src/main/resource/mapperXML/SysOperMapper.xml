@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysOperMapper">
+  <resultMap id="SysOperMap" type="com.wwtx.model.SysOper">
+    <result column="ID" jdbcType="INTEGER" property="id" />
+    <result column="OPER_CODE" jdbcType="VARCHAR" property="operCode" />
+    <result column="OPER_NAME" jdbcType="VARCHAR" property="operName" />
+  </resultMap>
+  <insert id="insert" parameterType="com.wwtx.model.SysOper">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">
+        select sys_guid() from dual
+    </selectKey>
+    insert into SYS_OPER (ID,OPER_CODE, OPER_NAME)
+    values (#{id,jdbcType=VARCHAR},#{operCode,jdbcType=VARCHAR}, #{operName,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="SysOperMap">
+    select * from SYS_OPER where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysFunc">
+    update SYS_OPER
+    set OPER_NAME = #{operName,jdbcType=VARCHAR},
+    OPER_CODE = #{operCode,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from SYS_OPER
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <sql id="listWhereCase">
+  	<where>
+  		<if test="param!=null and param.operCode!=null and param.operCode!='' ">     
+            OPER_CODE like '%'||#{param.operCode}||'%'
+        </if>
+    	<if test="param!=null and param.operName!=null and param.operName!='' ">     
+            AND OPER_NAME like '%'||#{param.operName}||'%'
+        </if>
+    </where>
+  </sql>
+  <!--   操作列表查询 -->
+  <select id="selectList" parameterType="com.wwtx.bean.PageBean" resultMap="SysOperMap">
+  	<include refid="com.wwtx.mapper.Common.pagination_Head" />
+    select * from SYS_OPER
+    <include refid="listWhereCase" />
+    <include refid="com.wwtx.mapper.Common.pagination_Tail" />
+  </select>
+<!--   操作列表计数 -->
+  <select id="countList" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+    select count(*) from SYS_OPER
+    <include refid="listWhereCase" />
+  </select>
+    <!-- 根据编码计数 -->
+  <select id="countByCode" parameterType="com.wwtx.model.SysOper" resultType="java.lang.Integer">
+  	select count(*) from SYS_OPER where OPER_CODE=#{operCode}
+  	<if test="id!=null and id!='' ">  
+  	 	and ID&lt;&gt;#{id}
+  	</if>
+  	<if test="id==null or id=='' ">  
+  	 	and ID is not null
+  	</if>
+  </select>
+</mapper>

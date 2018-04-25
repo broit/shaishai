@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wwtx.mapper.SysRoleOperMapper" >
+  <resultMap id="SysRoleOperMap" type="com.wwtx.model.SysRoleOper" >
+    <id column="ROLEOPER_UID" property="roleoperUid" jdbcType="INTEGER" />
+    <result column="ROLEOPER_ROLEID" property="roleoperRoleid" jdbcType="INTEGER" />
+    <result column="ROLEOPER_OPERID" property="roleoperOperid" jdbcType="INTEGER" />
+  </resultMap>
+  
+   <resultMap id ="SysRoleOperDtoMap" type="com.wwtx.model.dto.SysRoleOperDto" extends="SysRoleOperMap">
+    <result column="FUNC_UID" jdbcType="VARCHAR" property="funcUid" />
+    <result column="FUNC_NAME" jdbcType="VARCHAR" property="funcName" />
+    <result column="FUNC_PARENT" jdbcType="VARCHAR" property="funcParent" />
+    <result column="FUNC_LEVEL" jdbcType="VARCHAR" property="funcLevel" />
+    <result column="FUNC_URL" jdbcType="VARCHAR" property="funcUrl" />
+    <result column="FUNC_IMG" jdbcType="VARCHAR" property="funcImg" />
+    <result column="FUNC_TYPE" jdbcType="VARCHAR" property="funcType" />
+    <result column="FUNC_ISERIAL" jdbcType="VARCHAR" property="funcIserial" />
+    <result column="FUNC_REMARK" jdbcType="VARCHAR" property="funcRemark" />
+    <result column="ROLEFUNC_FUNCID" jdbcType="VARCHAR" property="rolefuncFuncid" />
+    <result column="ROLEFUNC_ROLEID" jdbcType="VARCHAR" property="rolefuncRoleid" />
+    <result column="OPER_NAME" jdbcType="VARCHAR" property="operName" />
+    <result column="OPER_CODE" jdbcType="VARCHAR" property="operCode" />
+    <result column="OPER_FUNC" jdbcType="VARCHAR" property="operFunc" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ROLEOPER_UID, ROLEOPER_ROLEID, ROLEOPER_OPERID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="SysRoleOperMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_roleoper
+    where ROLEOPER_UID = #{roleoperUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_roleoper
+    where ROLEOPER_UID = #{roleoperUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.SysRoleOper" >
+    insert into sys_roleoper (ROLEOPER_UID, ROLEOPER_ROLEID, ROLEOPER_OPERID
+      )
+    values (#{roleoperUid,jdbcType=VARCHAR}, #{roleoperRoleid,jdbcType=VARCHAR}, #{roleoperOperid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysRoleOper" >
+    insert into sys_roleoper
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleoperUid != null" >
+        ROLEOPER_UID,
+      </if>
+      <if test="roleoperRoleid != null" >
+        ROLEOPER_ROLEID,
+      </if>
+      <if test="roleoperOperid != null" >
+        ROLEOPER_OPERID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleoperUid != null" >
+        #{roleoperUid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleoperRoleid != null" >
+        #{roleoperRoleid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleoperOperid != null" >
+        #{roleoperOperid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysRoleOper" >
+    update sys_roleoper
+    <set >
+      <if test="roleoperRoleid != null" >
+        ROLEOPER_ROLEID = #{roleoperRoleid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleoperOperid != null" >
+        ROLEOPER_OPERID = #{roleoperOperid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROLEOPER_UID = #{roleoperUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysRoleOper" >
+    update sys_roleoper
+    set ROLEOPER_ROLEID = #{roleoperRoleid,jdbcType=VARCHAR},
+      ROLEOPER_OPERID = #{roleoperOperid,jdbcType=VARCHAR}
+    where ROLEOPER_UID = #{roleoperUid,jdbcType=VARCHAR}
+  </update>
+  
+      <!--  角色操作-批量插入 -->
+<insert id="batchInsertRoleOper" parameterType="java.util.List">
+	INSERT INTO SYS_ROLEOPER (ROLEOPER_UID, ROLEOPER_ROLEID, ROLEOPER_OPERID)
+	<foreach collection="list" item="item" index="index" separator="union all" >
+		select sys_guid() ,#{item.roleoperRoleid,jdbcType=VARCHAR} ,#{item.roleoperOperid,jdbcType=VARCHAR} from dual
+	</foreach>
+</insert>
+<!--  角色操作-删除 -->
+<delete id="deleteByRoleId" parameterType="java.lang.Integer">
+ delete SYS_ROLEOPER t where t.ROLEOPER_ROLEID =#{roleoperRoleid}
+</delete>
+</mapper>

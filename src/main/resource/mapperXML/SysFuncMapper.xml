@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwtx.mapper.SysFuncMapper">
+  <resultMap id="SysFuncMap" type="com.wwtx.model.SysFunc">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="FUNC_NAME" jdbcType="VARCHAR" property="funcName" />
+    <result column="FUNC_PARENT" jdbcType="VARCHAR" property="funcParent" />
+    <result column="FUNC_LEVEL" jdbcType="DECIMAL" property="funcLevel" />
+    <result column="FUNC_URL" jdbcType="VARCHAR" property="funcUrl" />
+    <result column="FUNC_IMG" jdbcType="VARCHAR" property="funcImg" />
+    <result column="FUNC_TYPE" jdbcType="DECIMAL" property="funcType" />
+    <result column="FUNC_ISERIAL" jdbcType="DECIMAL" property="funcIserial" />
+    <result column="FUNC_REMARK" jdbcType="VARCHAR" property="funcRemark" />
+    <result column="FUNC_CODE" jdbcType="VARCHAR" property="funcCode" />
+  </resultMap>
+  <resultMap id="SysFuncDtoMap" type="com.wwtx.model.dto.SysFuncDto" extends="SysFuncMap">
+    <result column="FUNC_PARENT_NAME" jdbcType="VARCHAR" property="funcParentName" />
+  </resultMap>
+  <resultMap id="SysFuncFormMap" type="com.wwtx.model.dto.SysFuncDto" extends="SysFuncDtoMap">
+    <collection property="otherFuncs" column="ID" javaType="java.util.ArrayList"
+    		 ofType="com.wwtx.model.dto.SysFuncDto" select="parentList"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, func_name, func_parent, func_level, func_url, func_img, func_type, func_iserial,func_remark,func_code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SysFuncDtoMap">
+    select 
+    f.*,p.func_name as func_parent_name
+    from sys_func f left join sys_func p on f.func_parent=p.id
+    where f.id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="loadForm" parameterType="java.lang.Integer" resultMap="SysFuncFormMap">
+    select 
+    f.*,p.func_name as func_parent_name
+    from sys_func f left join sys_func p on f.func_parent=p.id
+    where f.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_func
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.SysFunc">
+
+    insert into sys_func (id, func_name, func_parent, 
+      func_level, func_url, func_img, 
+      func_type, func_iserial, func_remark,func_code
+      )
+    values (#{id,jdbcType=INTEGER}, #{funcName,jdbcType=VARCHAR}, #{funcParent,jdbcType=VARCHAR}, 
+      #{funcLevel,jdbcType=DECIMAL}, #{funcUrl,jdbcType=VARCHAR}, #{funcImg,jdbcType=VARCHAR}, 
+      #{funcType,jdbcType=DECIMAL}, #{funcIserial,jdbcType=DECIMAL}, #{funcRemark,jdbcType=VARCHAR},#{funcCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.SysFunc">
+    insert into sys_func
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="funcName != null">
+        func_name,
+      </if>
+      <if test="funcParent != null">
+        func_parent,
+      </if>
+      <if test="funcLevel != null">
+        func_level,
+      </if>
+      <if test="funcUrl != null">
+        func_url,
+      </if>
+      <if test="funcImg != null">
+        func_img,
+      </if>
+      <if test="funcType != null">
+        func_type,
+      </if>
+      <if test="funcIserial != null">
+        func_iserial,
+      </if>
+      <if test="funcRemark != null">
+        func_remark,
+      </if>
+      <if test="funcCode != null">
+        func_code
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="funcName != null">
+        #{funcName,jdbcType=VARCHAR},
+      </if>
+      <if test="funcParent != null">
+        #{funcParent,jdbcType=VARCHAR},
+      </if>
+      <if test="funcLevel != null">
+        #{funcLevel,jdbcType=DECIMAL},
+      </if>
+      <if test="funcUrl != null">
+        #{funcUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="funcImg != null">
+        #{funcImg,jdbcType=VARCHAR},
+      </if>
+      <if test="funcType != null">
+        #{funcType,jdbcType=DECIMAL},
+      </if>
+      <if test="funcIserial != null">
+        #{funcIserial,jdbcType=DECIMAL},
+      </if>
+      <if test="funcRemark != null">
+        #{funcRemark,jdbcType=VARCHAR}
+      </if>
+      <if test="funcCode != null">
+        #{funcCode,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.SysFunc">
+    update sys_func
+    <set>
+      <if test="funcName != null">
+        func_name = #{funcName,jdbcType=VARCHAR},
+      </if>
+      <if test="funcParent != null">
+        func_parent = #{funcParent,jdbcType=VARCHAR},
+      </if>
+      <if test="funcLevel != null">
+        func_level = #{funcLevel,jdbcType=DECIMAL},
+      </if>
+      <if test="funcUrl != null">
+        func_url = #{funcUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="funcImg != null">
+        func_img = #{funcImg,jdbcType=VARCHAR},
+      </if>
+      <if test="funcType != null">
+        func_type = #{funcType,jdbcType=DECIMAL},
+      </if>
+      <if test="funcIserial != null">
+        func_iserial = #{funcIserial,jdbcType=DECIMAL},
+      </if>
+      <if test="funcRemark != null">
+        func_remark = #{funcRemark,jdbcType=VARCHAR}
+      </if>
+      <if test="funcCode != null">
+        func_code = #{funcCode,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.SysFunc">
+    update sys_func
+    set func_name = #{funcName,jdbcType=VARCHAR},
+      func_parent = #{funcParent,jdbcType=VARCHAR},
+      func_level = #{funcLevel,jdbcType=DECIMAL},
+      func_url = #{funcUrl,jdbcType=VARCHAR},
+      func_img = #{funcImg,jdbcType=VARCHAR},
+      func_type = #{funcType,jdbcType=DECIMAL},
+      func_iserial = #{funcIserial,jdbcType=DECIMAL},
+      func_remark = #{funcRemark,jdbcType=VARCHAR},
+      func_code = #{funcCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+<!--   列表数量 -->
+ <select id="count"  resultType="java.lang.Integer">
+ SELECT count(*)
+   FROM sys_func t LEFT JOIN sys_func t1 ON t.func_parent = t1.func_uid
+    WHERE 1 = 1
+      <if test="funcParent != null">
+        and func_parent = #{funcParent,jdbcType=VARCHAR},
+      </if>
+       <if test="funcName != null">
+      and  func_name  LIKE '%'||#{funcName,jdbcType=VARCHAR}||'%'
+      </if>
+ </select>
+ 
+ <select id="parentList" resultMap="SysFuncDtoMap">
+    select f.func_name,f.func_uid from sys_func f
+  	 	where id&lt;&gt;IFNULL(#{id,jdbcType=INTEGER},'null') and f.func_level=1
+  </select>
+ <sql id="listWhereCase">
+  	<where>
+  		<if test="param!=null and param.funcName!=null and param.funcName!='' ">     
+            f.func_name like '%'||#{param.funcName}||'%'
+        </if>
+    	<if test="param!=null and param.funcParentName!=null and param.funcParentName!='' ">     
+            AND p.func_name like '%'||#{param.funcParentName}||'%'
+        </if>
+    </where>
+  </sql>
+<!--   角色列表查询 -->
+  <select id="selectList" parameterType="com.wwtx.bean.PageBean" resultMap="SysFuncDtoMap">
+  	<include refid="com.wwtx.mapper.Common.pagination_Head" />
+    select 
+    f.*,IFNULL(p.func_name,'根节点') as func_parent_name
+    from sys_func f left join sys_func p on f.func_parent=p.id
+    <include refid="listWhereCase" />
+    order by f.func_level,f.func_parent,f.func_iserial
+    <include refid="com.wwtx.mapper.Common.pagination_Tail" />
+  </select>
+<!--   角色列表计数 -->
+  <select id="countList" parameterType="com.wwtx.bean.PageBean" resultType="java.lang.Integer">
+    select count(f.id) from sys_func f left join sys_func p on f.func_parent=p.id
+    <include refid="listWhereCase" />
+  </select>
+    <!-- 根据功能编码计数 -->
+  <select id="countByCode" parameterType="com.wwtx.model.dto.SysFuncDto" resultType="java.lang.Integer">
+  	select count(*) from sys_func where func_code=#{funccode} 
+  	<if test="funcUid!=null and funcUid!='' ">  
+  	 	and id&lt;&gt;#{funcUid}
+  	</if>
+  	<if test="funcUid==null or funcUid=='' ">  
+  	 	and id is not null
+  	</if>
+  </select>
+</mapper>
