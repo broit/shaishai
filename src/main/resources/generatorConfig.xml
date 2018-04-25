@@ -22,13 +22,13 @@
     </javaModelGenerator>
     <sqlMapGenerator targetPackage="mapperXML" targetProject="src/main/resources" />
     <javaClientGenerator targetPackage="com.wwtx.mapper" targetProject="src/main/java" type="XMLMAPPER" />
-	
-    	<table tableName="wwtx_article" domainObjectName="WwtxArcicle"
+<!--
+    	<table tableName="wwtx_user" domainObjectName="WwtxUser"
      	enableCountByExample="false"
       	enableUpdateByExample="false"
        	enableDeleteByExample="false"
         enableSelectByExample="false"
-        selectByExampleQueryId="false"/>
+        selectByExampleQueryId="false"/>-->
         
 	                                           
   </context>
