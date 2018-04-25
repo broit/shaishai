@@ -2,7 +2,7 @@ package com.wwtx.model;
 
 import java.util.Date;
 
-public class WwtxArcicle {
+public class WwtxArticle {
     private Integer id;
 
     private String content;
