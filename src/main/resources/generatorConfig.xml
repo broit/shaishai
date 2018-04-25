@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+<!-- <properties resource="jdbc.properties"/> -->
+  <context id="mysqlGenerator" >
+   <!--<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"></plugin>  
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin> 
+  	 Pagination
+        <plugin type="com.broit.plugin.OraclePaginationPlugin"></plugin>
+         -->  
+      
+        
+   <commentGenerator>
+  		<property name="suppressAllComments" value="true"/>
+  	</commentGenerator>
+
+    <!-- <jdbcConnection driverClass="${jdbc.driverClassName}" connectionURL="${jdbc.url}" userId="${jdbc.username}" password="${jdbc.password}" /> -->
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://58.56.181.112:3306/shaishai?characterEncoding=utf8&amp;allowMultiQueries=true" userId="shaishai" password="qazwsx0.00" />
+    <javaModelGenerator targetPackage="com.wwtx.model" targetProject="src/main/java" >
+    	<property name="enableSubPackages" value="false" />   
+        <property name="trimStrings" value="true" />   
+    </javaModelGenerator>
+    <sqlMapGenerator targetPackage="mapperXML" targetProject="src/main/resources" />
+    <javaClientGenerator targetPackage="com.wwtx.mapper" targetProject="src/main/java" type="XMLMAPPER" />
+	
+    	<table tableName="wwtx_article" domainObjectName="WwtxArcicle"
+     	enableCountByExample="false"
+      	enableUpdateByExample="false"
+       	enableDeleteByExample="false"
+        enableSelectByExample="false"
+        selectByExampleQueryId="false"/>
+        
+	                                           
+  </context>
+</generatorConfiguration>
