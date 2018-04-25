@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Admin" default=".help">
+    <!--
+    The build-impl.xml file imported here contains the guts of the build process. It is
+    a great idea to read that file to understand how the process works, but it is best to
+    limit your changes to this file.
+    -->
+    <import file="${basedir}/.sencha/app/build-impl.xml"/>
+
+    <!--
+    The following targets can be provided to inject logic before and/or after key steps
+    of the build process:
+
+        The "init-local" target is used to initialize properties that may be personalized
+        for the local machine.
+
+            <target name="-before-init-local"/>
+            <target name="-after-init-local"/>
+
+        The "clean" target is used to clean build output from the build.dir.
+
+            <target name="-before-clean"/>
+            <target name="-after-clean"/>
+
+        The general "init" target is used to initialize all other properties, including
+        those provided by Sencha Cmd.
+
+            <target name="-before-init"/>
+            <target name="-after-init"/>
+        
+        The "page" target performs the call to Sencha Cmd to build the 'all-classes.js' file.
+
+            <target name="-before-page"/>
+            <target name="-after-page"/>
+
+        The "build" target performs the call to Sencha Cmd to build the application.
+
+            <target name="-before-build"/>
+            <target name="-after-build"/>
+    -->
+    <macrodef name="x-run-build">
+        <attribute name="target"/>
+        <attribute name="theme"/>
+        <attribute name="locale" default="zh_CN"/>
+        <attribute name="buildName" default="@{theme}"/>
+        <attribute name="buildId" default="@{theme}-@{locale}"/>
+        <sequential>
+            <if>
+                <equals arg1="@{locale}" arg2=""/>
+                <then>
+                    <ant dir="${basedir}" inheritall="false" inheritrefs="true" target="@{target}">
+                        <property name="compiler.ref.id" value="${compiler.ref.id}-@{theme}"/>
+                        <property name="app.theme" value="ext-theme-@{theme}"/>
+                        <property name="app.build.dir.suffix" value="ext-theme-@{theme}"/>
+                        <property name="cmd.dir" value="${cmd.dir}"/>
+                        <property name="build.environment" value="${build.environment}"/>
+                        <property name="build.compression.yui" value="${build.compression.yui}"/>
+                        <property name="build.id" value="@{buildId}"/>
+                        <property name="build.name" value="@{buildName}"/>
+                    </ant>
+                </then>
+                <else>
+                    <ant dir="${basedir}" inheritall="false" inheritrefs="true" target="@{target}">
+                        <property name="compiler.ref.id" value="${compiler.ref.id}-@{theme}-@{locale}"/>
+                        <property name="app.theme" value="ext-theme-@{theme}"/>
+                        <property name="app.locale" value="@{locale}"/>
+                        <property name="app.build.dir.suffix" value="ext-theme-@{theme}-@{locale}"/>
+                        <property name="cmd.dir" value="${cmd.dir}"/>
+                        <property name="build.environment" value="${build.environment}"/>
+                        <property name="build.compression.yui" value="${build.compression.yui}"/>
+                        <property name="build.id" value="@{buildId}"/>
+                        <property name="build.name" value="@{buildName}"/>
+                    </ant>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+</project>

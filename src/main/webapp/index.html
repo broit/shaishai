@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+
+    <title>xx管理</title>
+
+    <script src="ext/ext-all-debug.js"></script>
+    <script src="ext/locale/locale-zh_CN.js"></script>
+    <script type="text/javascript">
+        var Ext = Ext || {}; // Ext namespace won't be defined yet...
+
+        Ext.author = {
+                        "user": ["add","modify","remove","userRole"],
+                        "role": ["add","modify","remove","roleFunc"]
+                    };
+
+        Ext.Loader.setConfig({  
+            enabled:true,  
+            paths:{  
+                'Ext.ux':'ext/ux',
+                'Ext.chart':'ext/chart',
+                'Ext.draw':'ext/draw'
+            }  
+        });  
+    </script>
+    
+    
+    <!-- The line below must be kept intact for Sencha Cmd to build your application -->
+    <script src="app/app.js"></script>
+    <link rel="stylesheet" type="text/css" href="app/resources/style.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="app/resources/font-awesome-ie7.min.css">
+    <![endif]-->
+</head>
+<body></body>
+</html>
