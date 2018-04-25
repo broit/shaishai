@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wwtx.mapper.WwtxArcicleMapper" >
-  <resultMap id="WwtxArcicleeResultMap" type="com.wwtx.model.WwtxArcicle" >
+<mapper namespace="com.wwtx.mapper.WwtxArticleMapper" >
+  <resultMap id="WwtxArticleResultMap" type="com.wwtx.model.WwtxArticle" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="cdate" property="cdate" jdbcType="TIMESTAMP" />
@@ -12,7 +12,7 @@
   <sql id="Base_Column_List" >
     id, content, cdate, openid, sorttime, istop
   </sql>
-  <select id="selectByPrimaryKey" resultMap="WwtxArcicleeResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="WwtxArticleResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from wwtx_article
@@ -22,7 +22,7 @@
     delete from wwtx_article
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wwtx.model.WwtxArcicle" >
+  <insert id="insert" parameterType="com.wwtx.model.WwtxArticle" >
     insert into wwtx_article (id, content, cdate, 
       openid, sorttime, istop
       )
@@ -30,7 +30,7 @@
       #{openid,jdbcType=VARCHAR}, #{sorttime,jdbcType=TIMESTAMP}, #{istop,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wwtx.model.WwtxArcicle" >
+  <insert id="insertSelective" parameterType="com.wwtx.model.WwtxArticle" >
     insert into wwtx_article
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -73,7 +73,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.WwtxArcicle" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.WwtxArticle" >
     update wwtx_article
     <set >
       <if test="content != null" >
@@ -94,7 +94,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.WwtxArcicle" >
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.WwtxArticle" >
     update wwtx_article
     set content = #{content,jdbcType=VARCHAR},
       cdate = #{cdate,jdbcType=TIMESTAMP},
