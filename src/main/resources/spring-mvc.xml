@@ -15,7 +15,7 @@
 
     <mvc:annotation-driven />
     <!--<task:annotation-driven/>-->
-    <context:component-scan base-package="*" />
+    <context:component-scan base-package="com.wwtx" />
 
     <!-- 打开aop 注解 -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
