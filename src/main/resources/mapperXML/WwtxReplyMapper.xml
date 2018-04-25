@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wwtx.mapper.WwtxReplyMapper" >
+  <resultMap id="WwtxReplyResultMap" type="com.wwtx.model.WwtxReply" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="artid" property="artid" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="cdate" property="cdate" jdbcType="TIMESTAMP" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="reply" property="reply" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, artid, openid, cdate, content, type, reply
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="WwtxReplyResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wwtx_reply
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wwtx_reply
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wwtx.model.WwtxReply" >
+    insert into wwtx_reply (id, artid, openid, 
+      cdate, content, type, 
+      reply)
+    values (#{id,jdbcType=INTEGER}, #{artid,jdbcType=INTEGER}, #{openid,jdbcType=VARCHAR}, 
+      #{cdate,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{reply,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wwtx.model.WwtxReply" >
+    insert into wwtx_reply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="artid != null" >
+        artid,
+      </if>
+      <if test="openid != null" >
+        openid,
+      </if>
+      <if test="cdate != null" >
+        cdate,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="reply != null" >
+        reply,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="artid != null" >
+        #{artid,jdbcType=INTEGER},
+      </if>
+      <if test="openid != null" >
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="cdate != null" >
+        #{cdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="reply != null" >
+        #{reply,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wwtx.model.WwtxReply" >
+    update wwtx_reply
+    <set >
+      <if test="artid != null" >
+        artid = #{artid,jdbcType=INTEGER},
+      </if>
+      <if test="openid != null" >
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="cdate != null" >
+        cdate = #{cdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="reply != null" >
+        reply = #{reply,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wwtx.model.WwtxReply" >
+    update wwtx_reply
+    set artid = #{artid,jdbcType=INTEGER},
+      openid = #{openid,jdbcType=VARCHAR},
+      cdate = #{cdate,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      reply = #{reply,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
